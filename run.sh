@@ -3,7 +3,6 @@ KITTI_BASE_PATH="/home/bt/KITTI/3D-object-detection"
 docker run -it \
         --runtime=nvidia \
         --net=host \
-        --rm=true \
         --privileged=true \
         --ipc=host \
         --volume="/tmp/.X11-unix:/tmp/.X11-unix:ro" \
