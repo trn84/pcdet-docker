@@ -6,6 +6,7 @@
 # python        3.6    (apt)
 # pytorch       latest (pip)
 # ==================================================================
+
 FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
 
 RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
@@ -101,15 +102,55 @@ RUN cp -r ./boost_1_68_0/boost /usr/include
 RUN rm -rf ./boost_1_68_0
 RUN rm -rf ./boost_1_68_0.tar.gz
 
-# Install spconv v1.0
+# Install spconv
 RUN git clone https://github.com/traveller59/spconv.git --recursive
 RUN cd ./spconv && git checkout 8da6f967fb9a054d8870c3515b1b44eca2103634 && python setup.py bdist_wheel
 RUN pip install /root/spconv/dist/spconv-1.0-cp36-cp36m-linux_x86_64.whl && \
     rm -rf /root/spconv
 
+# Install ROS Kinetic
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+
+# setup sources.list
+RUN echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/ros-latest.list
+
+# install bootstrap tools
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    python-rosdep \
+    python-rosinstall \
+    python-vcstools \
+    && rm -rf /var/lib/apt/lists/*
+
 # setup environment
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
+
+# bootstrap rosdep
+RUN rosdep init \
+    && rosdep update
+
+# install ros packages
+ENV ROS_DISTRO kinetic
+RUN apt-get update && apt-get install -y \
+    ros-kinetic-desktop-full \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN python -m pip --no-cache-dir install --upgrade \
+    rospkg \
+    catkin_pkg \
+    pyquaternion && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+    ros-kinetic-jsk-recognition-msgs \
+    ros-kinetic-jsk-rviz-plugins && \
+    apt-get clean && \
+    apt-get autoremove && \
+    rm -rf /var/lib/apt/lists/* /tmp/* ~/*
+
+# Setup cuda for numba
+#ENV NUMBAPRO_CUDA_DRIVER=/usr/lib/x86_64-linux-gnu/libcuda.so
+#ENV NUMBAPRO_NVVM=/usr/local/cuda/nvvm/lib64/libnvvm.so
+#ENV NUMBAPRO_LIBDEVICE=/usr/local/cuda/nvvm/libdevice
 
 # nvidia runtime
 COPY --from=nvidia/opengl:1.1-glvnd-runtime-ubuntu16.04 \
@@ -129,10 +170,19 @@ RUN echo '/usr/local/lib/x86_64-linux-gnu' >> /etc/ld.so.conf.d/glvnd.conf && \
 ENV NVIDIA_VISIBLE_DEVICES ${NVIDIA_VISIBLE_DEVICES:-all}
 ENV NVIDIA_DRIVER_CAPABILITIES ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
 
+# Update bashrc
+RUN echo "source /opt/ros/kinetic/setup.bash" >> /root/.bashrc
+RUN echo "source /root/catkin_ws/devel/setup.bash" >> /root/.bashrc
+
+RUN echo "ROS_MASTER_URI=http://localhost:11311" >> /root/.bashrc
+RUN echo "ROS_IP=127.0.0.1" >> /root/.bashrc
+
 WORKDIR /root
+
 
 # PCDet Framework
 ####################################################
+
 RUN git clone https://github.com/sshaoshuai/PCDet /root/PCDet
 RUN cd /root/PCDet && python setup.py develop
-RUN echo "export LD_LIBRARY_PATH=/usr/local/lib/python3.6/dist-packages/spconv:$LD_LIBRARY_PATH" >> /root/.bashrc
+RUN echo "export LD_LIBRARY_PATH=/opt/ros/kinetic/lib:/usr/local/lib/python3.6/dist-packages/spconv:$LD_LIBRARY_PATH" >> /root/.bashrc
