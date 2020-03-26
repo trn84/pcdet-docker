@@ -82,7 +82,7 @@ RUN apt-get purge -y cmake && \
     tar -xzvf cmake-3.13.2.tar.gz && \
     cd cmake-3.13.2 && \
     bash ./bootstrap && \
-    make -j16 && \
+    make && \
     make install && \
     cmake --version && \
     rm -rf /root/temp
