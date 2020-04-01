@@ -1,0 +1,37 @@
+FROM pcdet-docker
+
+RUN apt-get update && apt-get install -y \
+    curl sudo \
+    && curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash - \
+    && apt-get install -y \
+    git htop wget locales lsb-release nano \
+    netcat net-tools traceroute iputils-ping \
+    nodejs python3-pip \
+    && apt-get clean
+
+# Install pip packages
+RUN pip3 install --upgrade pip
+RUN pip3 install --upgrade setuptools
+RUN pip3 install jupyter ipython ipywidgets ipykernel jupyter_contrib_nbextensions jupyterlab nbparameterise
+
+# Setup jupyter lab environment
+RUN jupyter nbextension enable --py --sys-prefix widgetsnbextension && \
+    jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
+    jupyter labextension install bqplot && \
+    jupyter labextension install @jupyter-widgets/jupyterlab-sidecar
+
+###############################################################################
+
+# Copy stuff
+COPY passwd /tmp/passwd
+COPY group /tmp/group
+COPY ./set-sudo.sh /
+
+# Fix user rights
+RUN chown root:root /tmp/passwd && chown root:root /tmp/group
+RUN chmod 755 -R /root
+
+ENTRYPOINT ["/set-sudo.sh"]
+
+# Overwrite default command
+CMD /bin/bash
