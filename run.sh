@@ -1,4 +1,4 @@
-KITTI_BASE_PATH="/home/bt/KITTI/3D-object-detection"
+KITTI_BASE_PATH="/raid/data/projects/2020_trn_Datasets/PublicDatasets/KITTI/3D-object-detection"
 
 docker run -it \
         --runtime=nvidia \
@@ -12,6 +12,6 @@ docker run -it \
 	--name="pcdet" \
         -v $PWD/pretrained_models:/root/pretrained_models \
 	-v $PWD/persistent:/root/persistent \
-	-v $KITTI_BASE_PATH/training:/root/PCDet/data/kitti/training:ro \
-        -v $KITTI_BASE_PATH/testing:/root/PCDet/data/kitti/testing:ro \
+	-v $KITTI_BASE_PATH/training:/kitti/training:ro \
+        -v $KITTI_BASE_PATH/testing:/kitti/testing:ro \
 	pcdet-docker bash

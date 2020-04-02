@@ -90,7 +90,7 @@ RUN apt-get purge -y cmake && \
 # Install python packages
 RUN PIP_INSTALL="python -m pip --no-cache-dir install --upgrade" && \
     $PIP_INSTALL \
-        shapely fire pybind11 easydict tensorboardX pyyaml protobuf scikit-image tqdm pillow flask flask_cors
+        shapely fire pybind11 easydict tensorboardX pyyaml protobuf scikit-image tqdm pillow==7.0.0 flask flask_cors
 
 WORKDIR /root
 
@@ -133,6 +133,6 @@ WORKDIR /root
 
 # PCDet Framework
 ####################################################
-RUN git clone https://github.com/sshaoshuai/PCDet /root/PCDet
-RUN cd /root/PCDet && git checkout ecd1d54b3b2e585834d57f021c8871a151c551c1 && python setup.py develop
+#RUN git clone https://github.com/sshaoshuai/PCDet /root/PCDet
+#RUN cd /root/PCDet && python setup.py develop
 RUN echo "export LD_LIBRARY_PATH=/usr/local/lib/python3.6/dist-packages/spconv:$LD_LIBRARY_PATH" >> /root/.bashrc
