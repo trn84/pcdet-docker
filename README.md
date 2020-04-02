@@ -21,7 +21,7 @@ Contents:
 
 `start-as-root.sh` This script starts the container in detached mode as root and add the SUDO_USER parameter into the sudoers list. It is important that this script is executed as the user that is going to be used inside the container. Also here are all paths defined like KITTI path, Workspace Path, pretrained_models etc.
 
-`enter-with-user.sh` This script is used to enter the container with the given user. Please be aware that the default `/etc/bash.bashrc is used as rc-file and that the home inside the container is always at `/root`.
+`enter-with-user.sh` This script is used to enter the container with the given user. Please be aware that the default `/etc/bash.bashrc` is used as rc-file and that the home inside the container is always at `/root`.
 
 `run.sh` This can be used when no non-root user is required.
 
