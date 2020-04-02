@@ -28,6 +28,7 @@ RUN APT_INSTALL="apt-get install -y --no-install-recommends" && \
 	nano \
         libx11-dev \
         fish \
+        zsh \
         libsparsehash-dev \
         && \
 # ==================================================================
