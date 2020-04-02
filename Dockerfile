@@ -134,5 +134,5 @@ WORKDIR /root
 # PCDet Framework
 ####################################################
 RUN git clone https://github.com/sshaoshuai/PCDet /root/PCDet
-RUN cd /root/PCDet && python setup.py develop
+RUN cd /root/PCDet && git checkout ecd1d54b3b2e585834d57f021c8871a151c551c1 && python setup.py develop
 RUN echo "export LD_LIBRARY_PATH=/usr/local/lib/python3.6/dist-packages/spconv:$LD_LIBRARY_PATH" >> /root/.bashrc

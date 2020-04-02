@@ -2,7 +2,7 @@
 
 # Docker Arguments
 container="$USER-pcdet"
-image="pcdet-docker-ldap"
+image="pcdet-docker"
 
 # Designated SUDO user inside container
 sudo_user=$USER
@@ -12,14 +12,15 @@ jupyter_port="4222"
 hostname="10.10.88.10"
 
 # PCDet Arguments
-KITTI_BASE_PATH="/raid/data/Datasets/PublicDatasets/KITTI/3D-object-detection"
+KITTI_BASE_PATH="/raid/data/projects/2020_trn_Datasets/PublicDatasets/KITTI/3D-object-detection"
+PCDET_BASE_PATH="/raid/data/projects/2020_trn_pcdet"
 
 # Fresh start?
 docker stop $container
 docker rm $container
 
 echo "1. Container Starting as root..."
-docker run -dit \
+docker run -it \
         --name=$container \
 	--hostname="inside-docker" \
 	--privileged \
@@ -30,8 +31,7 @@ docker run -dit \
         --env="DISPLAY" \
         --env="QT_X11_NO_MITSHM=1" \
         -p $jupyter_port:8888 \
-        -v $HOME:/$HOME \
-	-v $KITTI_BASE_PATH/training:/kitti/training:ro \
-        -v $KITTI_BASE_PATH/testing:/kitti/testing:ro \
+	-v $KITTI_BASE_PATH/training:/root/PCDet/data/kitti/training:ro \
+        -v $KITTI_BASE_PATH/testing:/root/PCDet/data/kitti/testing:ro \
         $image
 echo "2. Container Running as root..."

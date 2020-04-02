@@ -5,7 +5,7 @@ container="trn-pcdet"
 
 echo "3. Jupyter Lab Starting as ${USER}..."
 docker exec -it -u $(id -u):$(id -g) $container \
-	bash --rcfile /root/.bashrc
+	bash
 #	bash -c "jupyter lab \
 #        --allow-root \
 #        --NotebookApp.token='al_token' \

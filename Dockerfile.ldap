@@ -27,9 +27,13 @@ COPY passwd /tmp/passwd
 COPY group /tmp/group
 COPY ./set-sudo.sh /
 
-# Fix user rights
+# Fix user rights and stuff
 RUN chown root:root /tmp/passwd && chown root:root /tmp/group
-RUN chmod 755 -R /root
+RUN mkdir /kitti && chmod 777 -R /kitti
+
+# Add stuff to default rcfile (maybe there is a better way)
+RUN echo "export HOME=/root" >> /etc/bash.bashrc
+RUN echo "export LD_LIBRARY_PATH=/usr/local/lib/python3.6/dist-packages/spconv:$LD_LIBRARY_PATH" >> /etc/bash.bashrc
 
 ENTRYPOINT ["/set-sudo.sh"]
 
