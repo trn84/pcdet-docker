@@ -28,3 +28,9 @@ Contents:
 `tools` In this folder random scripts are collected (to be removed in the future).
 
 
+ToDo's:
+
+* Fix home directory. The container could mount the host's user home directory but this brings other problems.
+* Fix .env and .bashrc file. The user would like to pass the desired environment during entering into the container.
+
+
